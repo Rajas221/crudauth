@@ -1,5 +1,10 @@
 {% load static %}
-<link rel="stylesheet" href="{% static 'api/style.css' %}">
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Register</title>
+    <link rel="stylesheet" href="{% static 'api/style.css' %}">
+</head>
 <body>
 <div class="container">
 
@@ -8,15 +13,36 @@
 <input id="username" placeholder="Username">
 <input id="email" placeholder="Email">
 <input id="password" type="password" placeholder="Password">
+
 <button onclick="registerUser()">Register</button>
+
 <p>Already have an account? <a href="/login/">Login here</a></p>
 
 </div>
 
 <script>
 async function registerUser(){
-    const res = await fetch("/api/register/", {...})
-    ...
+    const res = await fetch("/api/register/", {
+        method:"POST",
+        headers:{ "Content-Type":"application/json" },
+        body:JSON.stringify({
+            username:document.getElementById("username").value,
+            email:document.getElementById("email").value,
+            password:document.getElementById("password").value,
+        })
+    });
+
+    const data = await res.json();
+    console.log(data);
+
+    if(res.ok){
+        alert("Registered! Now login.");
+        window.location.href = "/login/";
+    } else {
+        alert("Error: " + JSON.stringify(data));
+    }
 }
 </script>
+
 </body>
+</html>
