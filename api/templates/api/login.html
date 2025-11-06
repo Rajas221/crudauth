@@ -1,0 +1,38 @@
+{% load static %}
+<link rel="stylesheet" href="{% static 'api/style.css' %}">
+
+<body>
+<div class="container">
+
+<h2>Login</h2>
+
+<input id="username" placeholder="Username">
+<input id="password" type="password" placeholder="Password">
+<button onclick="loginUser()">Login</button>
+
+<p>Don't have an account? <a href="/register/">Register Here</a></p>
+
+</div>
+
+<script>
+async function loginUser(){
+    const res = await fetch("/api/login/", {
+        method:"POST",
+        headers:{ "Content-Type":"application/json" },
+        body:JSON.stringify({
+            username:document.getElementById("username").value,
+            password:document.getElementById("password").value
+        })
+    });
+
+    const data = await res.json();
+    
+    if(data.access){
+        localStorage.setItem("token", data.access);
+        window.location.href="/profile/";
+    } else {
+        alert("Invalid credentials");
+    }
+}
+</script>
+</body>

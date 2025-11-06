@@ -1,0 +1,83 @@
+{% load static %}
+<link rel="stylesheet" href="{% static 'api/style.css' %}">
+
+<body>
+<div class="container">
+
+<h2>Your Profile</h2>
+
+<button onclick="logoutUser()">Logout</button>
+
+<br><br>
+<h3>Enter Information</h3>
+
+<input id="full_name" placeholder="Full Name">
+<input id="phone" placeholder="Phone Number">
+<textarea id="address" placeholder="Address"></textarea>
+
+<button onclick="saveProfile()">Save</button>
+
+<h3>All Saved Records</h3>
+<div id="display-info"></div>
+
+</div>
+
+<script>
+const token = localStorage.getItem("token");
+if(!token){ window.location.href="/login/"; }
+
+// Load table of all saved info
+async function loadTable(){
+    const res = await fetch("/api/userinfo/list/", {
+        headers:{ "Authorization":`Bearer ${token}` }
+    });
+    const data = await res.json();
+
+    let html = "<table border='1' cellpadding='5'><tr><th>Name</th><th>Phone</th><th>Address</th><th>Time</th></tr>";
+    data.forEach(row=>{
+        html += `<tr>
+            <td>${row.full_name}</td>
+            <td>${row.phone}</td>
+            <td>${row.address}</td>
+            <td>${new Date(row.created_at).toLocaleString()}</td>
+        </tr>`;
+    });
+    html += "</table>";
+
+    document.getElementById("display-info").innerHTML = html;
+}
+
+loadTable();
+
+// save new record
+async function saveProfile(){
+    const res = await fetch("/api/userinfo/add/", {
+        method:"POST",
+        headers:{
+            "Content-Type":"application/json",
+            "Authorization":`Bearer ${token}`
+        },
+        body:JSON.stringify({
+            full_name:document.getElementById("full_name").value,
+            phone:document.getElementById("phone").value,
+            address:document.getElementById("address").value
+        })
+    });
+
+    const data = await res.json();
+    console.log(data);
+
+    if(res.ok){
+        alert("Saved!");
+        loadTable(); // refresh table
+    } else {
+        alert("Error — check console");
+    }
+}
+
+function logoutUser(){
+    localStorage.removeItem("token");
+    window.location.href="/login/";
+}
+</script>
+</body>

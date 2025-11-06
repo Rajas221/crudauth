@@ -1,0 +1,22 @@
+{% load static %}
+<link rel="stylesheet" href="{% static 'api/style.css' %}">
+<body>
+<div class="container">
+
+<h2>Register</h2>
+
+<input id="username" placeholder="Username">
+<input id="email" placeholder="Email">
+<input id="password" type="password" placeholder="Password">
+<button onclick="registerUser()">Register</button>
+<p>Already have an account? <a href="/login/">Login here</a></p>
+
+</div>
+
+<script>
+async function registerUser(){
+    const res = await fetch("/api/register/", {...})
+    ...
+}
+</script>
+</body>
